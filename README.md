@@ -1,1 +1,1 @@
-### Coursera Cloud Computing Specialization
+# Coursera Cloud Computing Specialization
