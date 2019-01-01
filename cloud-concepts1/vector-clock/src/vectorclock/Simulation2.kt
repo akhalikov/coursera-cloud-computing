@@ -2,10 +2,12 @@ package vectorclock
 
 fun main(args: Array<String>) {
 
-  val p0 = Process(0, 4)
-  val p1 = Process(1, 4)
-  val p2 = Process(2, 4)
-  val p3 = Process(3, 4)
+  val numOfProcesses = 4
+
+  val p0 = Process(0, numOfProcesses)
+  val p1 = Process(1, numOfProcesses)
+  val p2 = Process(2, numOfProcesses)
+  val p3 = Process(3, numOfProcesses)
 
   p0.send(p2) // M1
   p0.instruction()
