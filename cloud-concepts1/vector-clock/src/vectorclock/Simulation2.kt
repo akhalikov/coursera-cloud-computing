@@ -29,8 +29,6 @@ fun main(args: Array<String>) {
 
   p1.send(p2) // M6
 
-  println(p1)
-
   p1.send(p0) // M7
   p0.receive() // M7
 

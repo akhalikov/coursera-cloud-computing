@@ -1,6 +1,6 @@
 package vectorclock
 
-data class Message(
+class Message(
   val processId: Int,
-  val timestamp: Int
+  val timestamps: IntArray
 )

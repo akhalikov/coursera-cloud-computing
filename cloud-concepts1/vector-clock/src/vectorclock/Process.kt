@@ -3,38 +3,44 @@ package vectorclock
 import java.util.*
 
 class Process(private val id: Int,
-              numOfProcesses: Int) {
+              numOfProcesses: Int,
+              private val printStatus: Boolean = false) {
 
-  var localTime: Int = 0
   var timestamps: IntArray = IntArray(numOfProcesses)
 
   var buffer: LinkedList<Message> = LinkedList()
 
-  fun instruction(): Int {
-    localTime++
-    if (localTime == 6) {
-      print("concurrent=" + this)
+  fun instruction() {
+    timestamps[id] += 1
+    if (printStatus) {
+      println(this)
     }
-
-    timestamps[id] = localTime
-    return localTime
   }
 
   fun send(process: Process) {
-    instruction()
-    process.putMessage(id, localTime)
+    timestamps[id] += 1
+    process.putMessage(id, timestamps)
+    if (printStatus) {
+      println(this)
+    }
   }
 
-  fun putMessage(processId: Int, timestamp: Int) {
-    buffer.push(Message(processId, timestamp))
+  fun putMessage(processId: Int, timestamps: IntArray) {
+    buffer.push(Message(processId, timestamps))
   }
 
   fun receive() {
     val message = buffer.poll()
 
-    localTime = Math.max(localTime, message.timestamp) + 1
-    timestamps[message.processId] = message.timestamp
-    timestamps[id] = localTime
+    timestamps[id] += 1
+    for (i in timestamps.indices) {
+      if (i != id) {
+        timestamps[i] = Math.max(message.timestamps[i], timestamps[i])
+      }
+    }
+    if (printStatus) {
+      println(this)
+    }
   }
 
   override fun equals(other: Any?): Boolean {
@@ -53,7 +59,7 @@ class Process(private val id: Int,
   }
 
   override fun toString(): String {
-    val descr = timestamps.joinToString(separator = ",")
-    return "P$id($descr)"
+    val description = timestamps.joinToString(separator = ",")
+    return "P$id($description)"
   }
 }
