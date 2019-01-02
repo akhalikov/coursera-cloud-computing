@@ -6,7 +6,7 @@ class Process(private val id: Int,
               numOfProcesses: Int,
               private val logTimestamps: Boolean = false) {
 
-  private var timestamps: IntArray = IntArray(numOfProcesses)
+  private val timestamps: IntArray = IntArray(numOfProcesses)
 
   var buffer: LinkedList<Message> = LinkedList()
 
