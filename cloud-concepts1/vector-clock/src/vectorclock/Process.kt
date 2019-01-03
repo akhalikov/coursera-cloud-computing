@@ -2,6 +2,10 @@ package vectorclock
 
 import java.util.LinkedList
 
+/**
+ * Simulation of a system process
+ * https://www.coursera.org/learn/cloud-computing/lecture/dy8wf/2-5-vector-clocks
+ */
 class Process(private val id: Int,
               numOfProcesses: Int,
               private val logTimestamps: Boolean = false) {
@@ -11,19 +15,21 @@ class Process(private val id: Int,
   var buffer: LinkedList<Message> = LinkedList()
 
   fun instruction() {
-    timestamps[id] += 1
+    timestamps[id]++  // increment only timestamp of the process
     log()
   }
 
   fun send(process: Process) {
-    timestamps[id] += 1
+    timestamps[id]++  // increment only timestamp of the process
     process.putMessage(timestamps)
     log()
   }
 
   fun receive() {
-    val message = buffer.poll()
-    timestamps[id] += 1
+    val message = buffer.poll()    
+    timestamps[id] += 1 // increment timestamp of the current process
+    
+    // for all other processes: Vi[j] = max(V_message[j], Vi[j]), for j != i
     for (i in timestamps.indices) {
       if (i != id) {
         timestamps[i] = Math.max(message.timestamps[i], timestamps[i])
@@ -47,6 +53,9 @@ class Process(private val id: Int,
     return "P$id($description)"
   }
 
+  /**
+   * Inter-process message
+   */
   class Message(
     val timestamps: IntArray
   )
