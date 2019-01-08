@@ -58,4 +58,6 @@ fun main(args: Array<String>) {
   assertTrue { mq.isEmpty(3) }
 
   println(toString(p))
+
+  assertTrue(p.all { it.getBufferSize() == 0 })
 }

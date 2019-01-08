@@ -1,6 +1,6 @@
 package multicast.fifo
 
-import java.util.*
+import java.util.ArrayDeque
 
 class Channel(numOfProcesses: Int) {
   private val messages = Array(numOfProcesses) { ArrayDeque<Message>() }
@@ -15,5 +15,15 @@ class Channel(numOfProcesses: Int) {
 
   fun isEmpty(processId: Int): Boolean {
     return messages[processId].isEmpty()
+  }
+
+  class Message(
+    val processId: Int,
+    val sequenceId: Int
+  ) {
+
+    override fun toString(): String {
+      return "M(from pId=$processId, seqId=$sequenceId)"
+    }
   }
 }

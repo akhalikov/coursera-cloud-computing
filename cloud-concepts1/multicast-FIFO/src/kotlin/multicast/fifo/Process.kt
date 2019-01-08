@@ -1,6 +1,8 @@
 package multicast.fifo
 
-import java.util.*
+import multicast.fifo.Channel.Message
+import java.util.Arrays
+import java.util.ArrayDeque
 import java.util.Arrays.toString
 
 class Process(
@@ -41,8 +43,8 @@ class Process(
     }
   }
 
-  fun isEmptyBuffer(): Boolean {
-    return buffer.isEmpty()
+  fun getBufferSize(): Int {
+    return buffer.size
   }
 
   private fun checkBuffer() {
