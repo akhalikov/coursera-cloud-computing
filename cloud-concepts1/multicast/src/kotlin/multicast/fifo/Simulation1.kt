@@ -1,12 +1,13 @@
 package multicast.fifo
 
+import multicast.Channel
 import java.util.Arrays.toString
 import kotlin.test.assertTrue
 
 fun main(args: Array<String>) {
   val n = 4
   val mq = Channel(n)
-  val p = Array(n) { i -> Process(i, n, mq)}
+  val p = Array(n) { i -> Process(i, n, mq) }
 
   println(toString(p))
 

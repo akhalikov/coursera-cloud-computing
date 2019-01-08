@@ -1,15 +1,18 @@
-package multicast.fifo
+package multicast
 
 import java.util.ArrayDeque
 
+/**
+ * Emulation of inter-process communication channel
+ */
 class Channel(numOfProcesses: Int) {
   private val messages = Array(numOfProcesses) { ArrayDeque<Message>() }
 
-  fun push(processId: Int, message: Message) {
+  fun putMessage(processId: Int, message: Message) {
     messages[processId].push(message)
   }
 
-  fun pop(processId: Int): Message? {
+  fun getLastMessage(processId: Int): Message? {
     return if (messages[processId].isNotEmpty()) messages[processId].pop() else null
   }
 
