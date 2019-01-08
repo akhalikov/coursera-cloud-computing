@@ -1,3 +1,5 @@
+package consistenthash
+
 import java.util.*
 
 class ConsistentHash(

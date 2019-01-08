@@ -1,3 +1,5 @@
+package globalsnapshot
+
 import java.util.*
 
 fun main(args: Array<String>) {

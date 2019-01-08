@@ -1,3 +1,5 @@
+package globalsnapshot
+
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -12,6 +14,6 @@ class Process(
   }
 
   override fun toString(): String {
-    return "Process(id=$id, S$state)"
+    return "multicast.fifo.globalsnapshot.Process(id=$id, S$state)"
   }
 }

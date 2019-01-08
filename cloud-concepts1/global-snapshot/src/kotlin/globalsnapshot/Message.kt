@@ -1,3 +1,5 @@
+package globalsnapshot
+
 class Message(
   private val type: Type,
   private val payload: String) {
@@ -8,6 +10,6 @@ class Message(
   }
 
   override fun toString(): String {
-    return "Message(type=$type, '$payload')"
+    return "globalsnapshot.Message(type=$type, '$payload')"
   }
 }
