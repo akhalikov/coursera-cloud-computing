@@ -1,4 +1,6 @@
-class Message(private val type: Type) {
+class Message(
+  private val type: Type,
+  private val payload: String) {
 
   enum class Type {
     APP,
@@ -6,6 +8,6 @@ class Message(private val type: Type) {
   }
 
   override fun toString(): String {
-    return "Message(type=$type)"
+    return "Message(type=$type, '$payload')"
   }
 }
