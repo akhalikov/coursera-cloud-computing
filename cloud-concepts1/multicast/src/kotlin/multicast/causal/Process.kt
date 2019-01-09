@@ -1,4 +1,4 @@
-package multicast.fifo
+package multicast.causal
 
 import multicast.Channel
 import java.util.ArrayDeque
@@ -30,7 +30,7 @@ class Process(
    */
   fun multicast() {
     sequence[id] += 1
-    val message = Message(id, sequence[id])
+    val message = Message(id, sequence)
     val sendToIds = (0 until numOfProcesses).filterNot { it == id }.toIntArray()
 
     log("multicast: $id -> ${toString(sendToIds)}, sequence=${toString(sequence)}")
@@ -52,13 +52,23 @@ class Process(
   fun receive() {
     val message = channel.getLastMessage(id) ?: return
 
-    val fromId = message.processId
-    if (message.sequenceId == sequence[fromId] + 1) {
+    if (isNextMessage(message) && allMulticastReceived(message)) {
       deliverMessage(message)
       checkBuffer()
     } else {
       addToBuffer(message)
     }
+  }
+
+  private fun isNextMessage(message: Message): Boolean {
+    val fromId = message.processId
+    return message.sequence[fromId] == sequence[fromId] + 1
+  }
+
+  private fun allMulticastReceived(message: Message): Boolean {
+    return (0 until message.sequence.size)
+      .filterNot { it == message.processId }
+      .all { message.sequence[it] <= sequence[it] }
   }
 
   fun getBufferSize(): Int {

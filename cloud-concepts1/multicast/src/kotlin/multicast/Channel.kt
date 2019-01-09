@@ -1,32 +1,23 @@
 package multicast
 
 import java.util.ArrayDeque
+import java.util.Arrays
 
 /**
  * Emulation of inter-process communication channel
  */
-class Channel(numOfProcesses: Int) {
-  private val messages = Array(numOfProcesses) { ArrayDeque<Message>() }
+class Channel<T>(numOfProcesses: Int) {
+  private val messages = Array(numOfProcesses) { ArrayDeque<T>() }
 
-  fun putMessage(processId: Int, message: Message) {
+  fun putMessage(processId: Int, message: T) {
     messages[processId].push(message)
   }
 
-  fun getLastMessage(processId: Int): Message? {
+  fun getLastMessage(processId: Int): T? {
     return if (messages[processId].isNotEmpty()) messages[processId].pop() else null
   }
 
   fun isEmpty(processId: Int): Boolean {
     return messages[processId].isEmpty()
-  }
-
-  class Message(
-    val processId: Int,
-    val sequenceId: Int
-  ) {
-
-    override fun toString(): String {
-      return "M(from pId=$processId, seqId=$sequenceId)"
-    }
   }
 }

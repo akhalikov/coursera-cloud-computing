@@ -6,7 +6,7 @@ import kotlin.test.assertTrue
 
 fun main(args: Array<String>) {
   val n = 4
-  val mq = Channel(n)
+  val mq = Channel<Message>(n)
   val p = Array(n) { i -> Process(i, n, mq) }
 
   println(toString(p))
