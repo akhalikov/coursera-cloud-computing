@@ -60,5 +60,5 @@ fun main(args: Array<String>) {
 
   println(toString(p))
 
-  p.forEach { println("it=${it.getBufferSize()}") }
+  assertTrue(p.all { it.getBufferSize() == 0 })
 }

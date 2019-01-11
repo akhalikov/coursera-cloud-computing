@@ -2,6 +2,7 @@ package multicast.causal
 
 import multicast.Channel
 import java.util.ArrayDeque
+import java.util.Arrays
 import java.util.Arrays.toString
 
 class Process(
@@ -30,10 +31,12 @@ class Process(
    */
   fun multicast() {
     sequence[id] += 1
-    val message = Message(id, sequence)
+    val message = Message(id, sequence.copyOf())
     val sendToIds = (0 until numOfProcesses).filterNot { it == id }.toIntArray()
 
+    println()
     log("multicast: $id -> ${toString(sendToIds)}, sequence=${toString(sequence)}")
+
     sendToIds.forEach { id -> channel.putMessage(id, message) }
   }
 
@@ -82,14 +85,15 @@ class Process(
   }
 
   private fun checkBuffer() {
-    if (buffer.isNotEmpty()) {
+    while (buffer.isNotEmpty()) {
       deliverMessage(buffer.pop())
     }
   }
 
   private fun deliverMessage(message: Message) {
     log("message delivered: $message")
-    sequence[message.processId] += 1
+    val fromId = message.processId
+    sequence[fromId] = message.sequence[fromId]
   }
 
   private fun log(str: String) {

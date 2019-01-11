@@ -33,6 +33,7 @@ class Process(
     val message = Message(id, sequence[id])
     val sendToIds = (0 until numOfProcesses).filterNot { it == id }.toIntArray()
 
+    println()
     log("multicast: $id -> ${toString(sendToIds)}, sequence=${toString(sequence)}")
     sendToIds.forEach { id -> channel.putMessage(id, message) }
   }
