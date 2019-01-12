@@ -5,7 +5,7 @@ import java.util.ArrayDeque
 import java.util.Arrays.toString
 
 class Process(
-  private val id: Int,
+  val id: Int,
   private val numOfProcesses: Int,
   private val channel: Channel<Message>
 ) {
@@ -13,13 +13,13 @@ class Process(
   /**
    * Each receiver maintains per-sender sequence number
    */
-  private val sequence = IntArray(numOfProcesses)
+  val sequence = IntArray(numOfProcesses)
 
-  private val buffer = ArrayDeque<Message>()
+  private val buffer:ArrayDeque<Message> = ArrayDeque()
 
   companion object {
     @JvmStatic
-    private var countBuffered: Int = 0
+    var countBuffered: Int = 0
   }
 
   /**
@@ -28,13 +28,13 @@ class Process(
    *  - Increment local sequence number
    *  - Include incremented sequence number in multicast message
    */
-  fun multicast() {
+  fun multicast(messageKey: String) {
     sequence[id] += 1
-    val message = Message(id, sequence[id])
+    val message = Message(id, sequence[id], messageKey)
     val sendToIds = (0 until numOfProcesses).filterNot { it == id }.toIntArray()
 
     println()
-    log("multicast: $id -> ${toString(sendToIds)}, sequence=${toString(sequence)}")
+    log("multicast($messageKey) -> ${toString(sendToIds)}, vector=${toString(sequence)}")
     sendToIds.forEach { id -> channel.putMessage(id, message) }
   }
 
@@ -51,8 +51,16 @@ class Process(
    *    |_ buffer this multicast until above condition is true
    */
   fun receive() {
-    val message = channel.getLastMessage(id) ?: return
+    val message = channel.getLatestMessage(id) ?: return
+    processReceive(message)
+  }
 
+  fun receiveOldest() {
+    val message = channel.getOldestMessage(id) ?: return
+    processReceive(message)
+  }
+
+  private fun processReceive(message: Message) {
     val fromId = message.processId
     if (message.sequenceId == sequence[fromId] + 1) {
       deliverMessage(message)
@@ -67,20 +75,21 @@ class Process(
   }
 
   private fun addToBuffer(message: Message) {
-    buffer.push(message)
+    buffer.offer(message)
     countBuffered += 1
-    log("buffered=$countBuffered")
+    log("buffered ${message.key}, count=$countBuffered")
   }
 
   private fun checkBuffer() {
     if (buffer.isNotEmpty()) {
-      deliverMessage(buffer.pop())
+      deliverMessage(buffer.poll())
     }
   }
 
   private fun deliverMessage(message: Message) {
-    log("message delivered: $message")
-    sequence[message.processId] += 1
+    val fromId = message.processId
+    sequence[fromId] += 1
+    log("delivered $message, vector=${toString(sequence)}")
   }
 
   private fun log(str: String) {
@@ -88,6 +97,6 @@ class Process(
   }
 
   override fun toString(): String {
-    return "Process(id=$id, [${toString(sequence)}])"
+    return "Process(id=$id, ${toString(sequence)})"
   }
 }

@@ -4,10 +4,11 @@ import java.util.Arrays.toString
 
 class Message(
   val processId: Int,
-  val sequence: IntArray
+  val sequence: IntArray,
+  val key: String
 ) {
 
   override fun toString(): String {
-    return "M(from pId=$processId, ${toString(sequence)})"
+    return "Message($key, from pId=$processId, ${toString(sequence)})"
   }
 }
