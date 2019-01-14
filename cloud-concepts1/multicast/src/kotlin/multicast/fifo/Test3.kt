@@ -13,38 +13,43 @@ fun main(args: Array<String>) {
 
   println("Start")
 
+  p[2].multicast("M2")
   p[1].multicast("M1")
 
   p[0].receive()    // M1
   p[2].receive()    // M1
-  p[3].receive()    // M1
-
-  p[0].multicast("M2")
 
   p[1].receive()    // M2
-  p[2].receive()    // M2
+  p[3].receive()    // M2
 
-  p[1].multicast("M3")
+  p[3].multicast("M3")
 
   p[0].receive()    // M3
-  p[3].receive()    // M3
+  p[1].receive()    // M3
+  p[2].receive()    // M3
 
-  p[3].multicast("M4")
-  assertTrue { intArrayOf(0, 2, 0, 1).contentEquals(p[3].sequence) }
+  p[0].receive()    // M2
 
-  p[0].receive()    // M4
+  p[0].multicast("M4")
+
+  p[3].receive()    // M4
+  p[1].receive()    // M4
   p[2].receive()    // M4
 
   p[1].multicast("M5")
 
-  p[1].receive()    // M4
   p[0].receive()    // M5
-
-  p[2].receiveOldest()  // M3
-  p[2].receive()        // M5
-
-  p[3].receive()    // M2
   p[3].receive()    // M5
+
+  p[2].multicast("M6")
+
+  p[1].receive()    // M6
+  p[0].receive()    // M6
+  p[3].receive()    // M6
+
+  p[2].receive()    // M5
+
+  p[3].receive()    // M1
 
   println()
   println("Stop")
@@ -54,5 +59,4 @@ fun main(args: Array<String>) {
 
   assertTrue { p.all { process -> mq.isEmpty(process.id) } }
   assertTrue { p.all { it.getBufferSize() == 0 } }
-  assertTrue { p.all { intArrayOf(1, 3, 0, 1).contentEquals(it.sequence) } }
 }
