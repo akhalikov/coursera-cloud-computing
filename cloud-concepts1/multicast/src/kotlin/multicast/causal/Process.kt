@@ -49,7 +49,7 @@ class Process(
    *    |_ increment seq. number at index j
    *
    *  - else:
-   *    |_ buffer this multicast until above condition is true
+   *    |_ messages this multicast until above condition is true
    */
   fun receive() {
     processReceive(channel.getLatestMessage(id) ?: return)

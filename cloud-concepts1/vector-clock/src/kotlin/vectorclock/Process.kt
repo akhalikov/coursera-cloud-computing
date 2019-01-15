@@ -1,32 +1,35 @@
 package vectorclock
 
-import java.util.LinkedList
+import java.lang.IllegalArgumentException
+import java.util.Arrays
 
 /**
  * Simulation of a system process
  * https://www.coursera.org/learn/cloud-computing/lecture/dy8wf/2-5-vector-clocks
  */
-class Process(private val id: Int,
-              numOfProcesses: Int,
-              private val logTimestamps: Boolean = false) {
+class Process(private val id: Int, numOfProcesses: Int) {
 
   private val timestamps: IntArray = IntArray(numOfProcesses)
-
-  var buffer: LinkedList<Message> = LinkedList()
+  var messages: HashMap<String, Message> = HashMap()
 
   fun instruction() {
     timestamps[id]++  // increment only timestamp of the process
-    log()
+    log("instruction")
   }
 
-  fun send(process: Process) {
+  fun send(process: Process, messageId: String) {
     timestamps[id]++  // increment only timestamp of the process
-    process.putMessage(timestamps)
-    log()
+
+    val message = Message(timestamps.copyOf())
+    process.messages[messageId] = message
+
+    log("send $messageId -> P${process.id}")
   }
 
-  fun receive() {
-    val message = buffer.poll()    
+  fun receive(messageId: String) {
+    val message = messages.remove(messageId)
+      ?: throw IllegalArgumentException("No such message: $messageId")
+
     timestamps[id] += 1 // increment timestamp of the current process
     
     // for all other processes: Vi[j] = max(V_message[j], Vi[j]), for j != i
@@ -35,28 +38,24 @@ class Process(private val id: Int,
         timestamps[i] = Math.max(message.timestamps[i], timestamps[i])
       }
     }
-    log()
+
+    log("received $message")
   }
 
-  private fun putMessage(timestamps: IntArray) {
-    buffer.push(Message(timestamps))
-  }
-
-  private fun log() {
-    if (logTimestamps) {
-      println(this)
-    }
+  private fun log(message: String) {
+    println("$this: $message")
   }
 
   override fun toString(): String {
-    val description = timestamps.joinToString(separator = ",")
-    return "P$id($description)"
+    return "P$id${Arrays.toString(timestamps)}"
   }
 
   /**
    * Inter-process message
    */
-  class Message(
-    val timestamps: IntArray
-  )
+  class Message(val timestamps: IntArray) {
+    override fun toString(): String {
+      return "M${Arrays.toString(timestamps)}"
+    }
+  }
 }
