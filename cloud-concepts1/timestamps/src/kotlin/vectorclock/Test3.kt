@@ -6,7 +6,6 @@ import kotlin.test.assertTrue
 fun main(args: Array<String>) {
 
   val n = 4
-
   val processes = Array(n) { i -> Process(i, n) }
 
   val p1 = processes[0]
