@@ -1,3 +1,5 @@
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/3b0c58319b6a42f99f0d2b6126af1058)](https://www.codacy.com/app/akhalikov/coursera-cloud-computing?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=akhalikov/coursera-cloud-computing&amp;utm_campaign=Badge_Grade)
+
 ## Cloud Computing Specialization @ Coursera
 
 https://www.coursera.org/specializations/cloud-computing
